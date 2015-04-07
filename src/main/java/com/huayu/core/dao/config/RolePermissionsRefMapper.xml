@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.core.dao.mapper.RolePermissionsRefMapper">
+	<cache></cache>
+	
+	<resultMap type="com.huayu.core.bean.vo.RolePermissionsRef" id="RolePermissionsRefMap">
+		<result property="roleId" column="ROLE_ID" />
+		<result property="permissionsKey" column="PERMISSIONS_KEY" />
+		<result property="createdDate" column="CREATED_DATE" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="lastupdatedDate" column="LASTUPDATED_DATE" />
+		<result property="lastupdatedBy" column="LASTUPDATED_BY" />
+	</resultMap>
+	
+	<insert id="insertRolePermissionsRef" parameterType="com.huayu.core.bean.vo.RolePermissionsRef">
+		INSERT INTO TPL_ROLE_PERMISSIONS_REF_T(
+			<if test="createdBy!=null">
+				CREATED_BY,
+			</if>
+			ROLE_ID,
+			PERMISSIONS_KEY,
+			CREATED_DATE
+		)
+		VALUES(
+			<if test="createdBy!=null">
+				#{createdBy},
+			</if>
+			#{roleId},
+			#{permissionsKey},
+			NOW()
+		)
+	</insert>
+	
+	<select id="checkExistsRolePermissionsRef" parameterType="com.huayu.core.bean.vo.RolePermissionsRef" resultType="long">
+		SELECT COUNT(1) FROM TPL_ROLE_PERMISSIONS_REF_T
+		WHERE ROLE_ID=#{roleId} AND PERMISSIONS_KEY=#{permissionsKey}
+	</select>
+</mapper>

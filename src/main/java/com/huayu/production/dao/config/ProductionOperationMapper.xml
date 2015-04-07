@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.production.dao.mapper.ProductionOperationMapper">
+	<cache></cache>
+
+	<resultMap type="com.huayu.production.bean.vo.ProductionOperation" id="ProductionOperationMap">
+		<result property="productionId" column="PRODUCTION_ID" />
+		<result property="operationType" column="OPERATION_TYPE" />
+		<result property="userId" column="USER_ID" />
+		<result property="operationDate" column="OPERATION_DATE" />
+		<result property="ipAddress" column="IP_ADDRESS" />
+		<result property="operationDesc" column="OPERATION_DESC" />
+		
+		<result property="operationCount" column="OPERATION_COUNT" />
+		
+		<association property="operationUser" column="USER_ID" resultMap="UserMap" 
+			javaType="com.huayu.core.bean.vo.User"></association>
+	</resultMap>
+	
+	<resultMap type="com.huayu.core.bean.vo.User" id="UserMap">
+		<result property="id" column="U_ID" />
+		<result property="userAccount" column="U_USER_ACCOUNT" />
+		<result property="userName" column="U_USER_NAME" />
+		<result property="userPassword" column="U_USER_PASSWORD" />
+		<result property="userDesc" column="U_USER_DESC" />
+		<result property="systemUser" column="U_SYSTEM_USER" /> 
+		<result property="accountType" column="U_ACCOUNT_TYPE" /> 
+		<result property="signatureImgId" column="U_SIGNATURE_IMG_ID" /> 
+		<result property="createdDate" column="U_CREATED_DATE" />
+		<result property="createdBy" column="U_CREATED_BY" />
+		<result property="lastupdatedDate" column="U_LASTUPDATED_DATE" />
+		<result property="lastupdatedby" column="U_LASTUPDATED_BY" />
+	</resultMap>
+	
+	<insert id="insertProductionOperation" parameterType="com.huayu.production.bean.vo.ProductionOperation">
+		INSERT INTO HY_PRODUCTION_OPERATION_T(
+			<if test="productionId!=null">
+				PRODUCTION_ID,
+			</if>
+			<if test="operationType!=null">
+				OPERATION_TYPE,
+			</if>
+			<if test="userId!=null">
+				USER_ID,
+			</if>
+			<if test="ipAddress!=null">
+				IP_ADDRESS,
+			</if>
+			<if test="operationDesc!=null">
+				OPERATION_DESC,
+			</if>
+			OPERATION_DATE
+		)
+		VALUES(
+			<if test="productionId!=null">
+				#{productionId},
+			</if>
+			<if test="operationType!=null">
+				#{operationType},
+			</if>
+			<if test="userId!=null">
+				#{userId},
+			</if>
+			<if test="ipAddress!=null">
+				#{ipAddress},
+			</if>
+			<if test="operationDesc!=null">
+				#{operationDesc},
+			</if>
+			NOW()
+		)
+	</insert>
+	
+	<select id="selectProductionOperation" parameterType="com.huayu.production.bean.vo.ProductionOperation" resultMap="ProductionOperationMap">
+		SELECT
+			PO_T.PRODUCTION_ID,
+			PO_T.OPERATION_TYPE,
+			PO_T.USER_ID,
+			PO_T.OPERATION_DATE,
+			PO_T.IP_ADDRESS,
+			PO_T.OPERATION_DESC,
+			U_T.ID U_ID,
+			U_T.USER_ACCOUNT U_USER_ACCOUNT,
+			U_T.USER_NAME U_USER_NAME,
+			U_T.USER_DESC U_USER_DESC,
+			U_T.SYSTEM_USER U_SYSTEM_USER,
+			U_T.USER_STATUS U_USER_STATUS,
+			U_T.ACCOUNT_TYPE U_ACCOUNT_TYPE,
+			U_T.SIGNATURE_IMG_ID U_SIGNATURE_IMG_ID
+		FROM 
+			HY_PRODUCTION_OPERATION_T PO_T
+		LEFT JOIN
+			TPL_USER_T U_T
+		ON PO_T.USER_ID=U_T.ID
+		<where>
+			<if test="productionId!=null">
+				AND PO_T.PRODUCTION_ID=#{productionId}
+			</if>
+			<if test="operationType!=null">
+				AND PO_T.OPERATION_TYPE=#{operationType}
+			</if>
+			<if test="userId!=null">
+				AND PO_T.USER_ID=#{userId}
+			</if>
+		</where>
+		ORDER BY PO_T.OPERATION_DATE
+	</select>
+	
+	<select id="statisticsProductionOperation" parameterType="com.huayu.production.bean.vo.ProductionOperation" resultMap="ProductionOperationMap">
+		SELECT
+			COUNT(1) OPERATION_COUNT,
+			PO_T.OPERATION_TYPE
+		FROM 
+			HY_PRODUCTION_OPERATION_T PO_T
+		<where>
+			<if test="productionId!=null">
+				AND PO_T.PRODUCTION_ID=#{productionId}
+			</if>
+			<if test="operationType!=null">
+				AND PO_T.OPERATION_TYPE=#{operationType}
+			</if>
+			<if test="userId!=null">
+				AND PO_T.USER_ID=#{userId}
+			</if>
+		</where>
+		GROUP BY PO_T.OPERATION_TYPE
+	</select>
+	
+	<select id="checkHasOperations" parameterType="com.huayu.production.bean.vo.ProductionComment" resultType="int">
+		SELECT 
+			COUNT(1)
+		FROM 
+			HY_PRODUCTION_OPERATION_T PO_T
+		<where>
+			<if test="productionId!=null">
+				AND PO_T.PRODUCTION_ID=#{productionId}
+			</if>
+			<if test="operationType!=null">
+				AND PO_T.OPERATION_TYPE=#{operationType}
+			</if>
+			<if test="userId!=null">
+				AND PO_T.USER_ID=#{userId}
+			</if>
+		</where>
+	</select>
+</mapper>

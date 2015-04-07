@@ -1,0 +1,54 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="  
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd  
+	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd">
+
+	<!-- 系统初始化信息 -->
+	<!-- 容器初始化 -->
+	<bean class="com.huayu.core.util.SystemInit"></bean>
+	
+	<!-- 系统参数配置 -->
+	<bean class="com.huayu.core.config.PermissionsConfiguer" scope="singleton">
+		<!-- 权限类的跟包 -->
+		<property name="basePackage">
+			<list>
+				<value>com.huayu.*.controller</value>
+			</list>
+		</property>
+		<!-- 系统默认初始化角色 -->
+		<property name="defaultRoles">
+			<list>
+				<bean class="com.huayu.core.bean.vo.UserRole">
+					<property name="roleName" value="System Admin"></property>
+					<property name="roleDesc" value="系统管理员"></property>
+					<property name="adminRole" value="1"></property>
+				</bean>
+				<bean class="com.huayu.core.bean.vo.UserRole">
+					<property name="roleName" value="读者"></property>
+					<property name="roleDesc" value="默认角色；每个用户都会有的角色"></property>
+					<property name="defaultRole" value="1"></property>
+				</bean>
+			</list>
+		</property>
+		<!-- 系统默认用户 -->
+		<property name="defaultUser">
+			<bean class="com.huayu.core.bean.vo.User">
+				<property name="userAccount" value="root"></property>
+				<property name="userName" value="管理员"></property>
+				<property name="userPassword" value="root"></property>
+				<property name="userDesc" value="系统默认超级管理员账户"></property>
+				<property name="systemUser" value="1"></property>
+				<property name="initRoleName" value="System Admin"></property>
+				<property name="accountType" value="0"></property>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 系统参数配置 -->
+	<bean class="com.huayu.core.config.SystemConfiguer">
+		<property name="resourcesBaseLocation" value="D:/huayu"></property>
+		<property name="resourceTempLocation" value="D:/huayu/temp"></property>
+	</bean>
+</beans>

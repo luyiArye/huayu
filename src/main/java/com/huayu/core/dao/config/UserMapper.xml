@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.core.dao.mapper.UserMapper">
+	<cache></cache>
+	
+	<resultMap type="com.huayu.core.bean.vo.User" id="UserMap">
+		<result property="id" column="ID" />
+		<result property="userAccount" column="USER_ACCOUNT" />
+		<result property="userName" column="USER_NAME" />
+		<result property="userPassword" column="USER_PASSWORD" />
+		<result property="userDesc" column="USER_DESC" />
+		<result property="systemUser" column="SYSTEM_USER" /> 
+		<result property="accountType" column="ACCOUNT_TYPE" /> 
+		<result property="signatureImgId" column="SIGNATURE_IMG_ID" /> 
+		<result property="createdDate" column="CREATED_DATE" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="lastupdatedDate" column="LASTUPDATED_DATE" />
+		<result property="lastupdatedby" column="LASTUPDATED_BY" />
+		<result property="userStatus" column="USER_STATUS" />
+	</resultMap>
+	
+	<resultMap type="com.huayu.core.bean.vo.UserHeadIco" id="UserHeadIcoMap">
+		<result property="userId" column="USER_ID" />
+		<result property="resourceId" column="RESOURCE_ID" />
+		<result property="headIcoType" column="HEAD_ICO_TYPE" />
+	</resultMap>
+
+	<select id="checkExistsUser" parameterType="com.huayu.core.bean.vo.User" resultType="long">
+		SELECT COUNT(1) FROM TPL_USER_T T 
+		WHERE T.USER_ACCOUNT=TRIM(#{userAccount})
+	</select>
+	
+	<insert id="insertUser" parameterType="com.huayu.core.bean.vo.User" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO TPL_USER_T(
+			<if test="userAccount!=null">
+				USER_ACCOUNT,
+			</if>
+			<if test="userName!=null">
+				USER_NAME,
+			</if>
+			<if test="userPassword!=null">
+				USER_PASSWORD,
+			</if>
+			<if test="userDesc!=null">
+				USER_DESC,
+			</if>
+			<if test="systemUser!=null">
+				SYSTEM_USER,
+			</if>
+			<if test="accountType!=null">
+				ACCOUNT_TYPE,
+			</if>
+			<if test="signatureImgId!=null">
+				SIGNATURE_IMG_ID,
+			</if>
+			<if test="createdBy!=null">
+				CREATED_BY,
+			</if>
+			CREATED_DATE
+		)
+		VALUES(
+			<if test="userAccount!=null">
+				#{userAccount},
+			</if>
+			<if test="userName!=null">
+				#{userName},
+			</if>
+			<if test="userPassword!=null">
+				#{userPassword},
+			</if>
+			<if test="userDesc!=null">
+				#{userDesc},
+			</if>
+			<if test="systemUser!=null">
+				#{systemUser},
+			</if>
+			<if test="accountType!=null">
+				#{accountType},
+			</if>
+			<if test="signatureImgId!=null">
+				#{signatureImgId},
+			</if>
+			<if test="createdBy!=null">
+				#{createdBy},
+			</if>
+			NOW()
+		)
+	</insert>
+	
+	<select id="selectUser" parameterType="com.huayu.core.bean.vo.User" resultMap="UserMap">
+		SELECT
+			ID,
+			USER_ACCOUNT,
+			USER_NAME,
+			USER_PASSWORD,
+			USER_DESC,
+			SYSTEM_USER,
+			ACCOUNT_TYPE,
+			SIGNATURE_IMG_ID,
+			CREATED_DATE,
+			CREATED_BY,
+			LASTUPDATED_DATE,
+			LASTUPDATED_BY,
+			USER_STATUS
+		FROM
+			TPL_USER_T
+		<where>
+			<if test="id!=null">
+				AND ID=#{id}
+			</if>
+			<if test="userAccount!=null">
+				AND USER_ACCOUNT=#{userAccount}
+			</if>
+			<if test="userName!=null">
+				AND USER_NAME=#{userName}
+			</if>
+			<if test="systemUser!=null">
+				AND SYSTEM_USER=#{systemUser}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectHeadIco" parameterType="com.huayu.core.bean.vo.UserHeadIco" resultMap="UserHeadIcoMap">
+		SELECT
+			USER_ID,
+			RESOURCE_ID,
+			HEAD_ICO_TYPE
+		FROM
+			HY_USER_HEAD_ICO_T
+		WHERE 
+			USER_ID=#{userId}
+			AND HEAD_ICO_TYPE=#{headIcoType}
+		LIMIT 1
+	</select>
+	
+	<update id="updateUser" parameterType="com.huayu.core.bean.vo.User">
+		UPDATE TPL_USER_T SET
+			<if test="userName!=null">
+				USER_NAME=#{userName},
+			</if>
+			<if test="userPassword!=null">
+				USER_PASSWORD=#{userPassword},
+			</if>
+			<if test="userDesc!=null">
+				USER_DESC=#{userDesc},
+			</if>
+			<if test="signatureImgId!=null">
+				SIGNATURE_IMG_ID=#{signatureImgId},
+			</if>
+			<if test="lastupdatedBy!=null">
+				LASTUPDATED_BY=#{lastupdatedBy},
+			</if>
+			<if test="userStatus!=null">
+				USER_STATUS=#{userStatus},
+			</if>
+			LASTUPDATED_DATE=NOW()
+		WHERE ID=#{id,jdbcType=NUMERIC}
+	</update>
+</mapper>

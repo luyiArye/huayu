@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" updateCheck="false">
+
+	<diskStore path="user.home/ehcache/mpa" />
+
+	<defaultCache maxElementsInMemory="2000" eternal="false"
+		overflowToDisk="true"
+		maxElementsOnDisk="10000000" 
+		diskPersistent="false"
+		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" />
+
+	<!-- timeToIdleSeconds="300" timeToLiveSeconds="600" -->
+	<cache name="subject" maxElementsInMemory="2000"
+		maxElementsOnDisk="3000" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="20" 
+		memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="navigation" maxElementsInMemory="2000"
+		maxElementsOnDisk="3000" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="20"
+		memoryStoreEvictionPolicy="LFU" />
+
+</ehcache>    

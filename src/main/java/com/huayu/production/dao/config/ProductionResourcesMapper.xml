@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.production.dao.mapper.ProductionResourcesMapper">
+	<cache></cache>
+
+	<resultMap type="com.huayu.production.bean.vo.ProductionResources" id="ProductionResourcesMap">
+		<result property="productionId" column="PRODUCTION_ID" />
+		<result property="resourceId" column="RESOURCE_ID" />
+		<result property="description" column="DESCRIPTION" />
+		<result property="seqNo" column="SEQ_NO" />
+	</resultMap>
+	
+	<insert id="insertProductionResources" parameterType="com.huayu.production.bean.vo.ProductionResources">
+		INSERT INTO HY_PRODUCTION_RESOURCES_T(
+			<if test="description!=null">
+				DESCRIPTION,
+			</if>
+			<if test="seqNo!=null">
+				SEQ_NO,
+			</if>
+			PRODUCTION_ID,
+			RESOURCE_ID
+		)
+		VALUES(
+			<if test="description!=null">
+				#{description},
+			</if>
+			<if test="seqNo!=null">
+				#{seqNo},
+			</if>
+			#{productionId},
+			#{resourceId}
+		)
+	</insert>
+	
+	<select id="selectProductionResources" parameterType="com.huayu.production.bean.vo.ProductionResources" resultMap="ProductionResourcesMap">
+		SELECT
+			PRODUCTION_ID,
+			RESOURCE_ID,
+			DESCRIPTION,
+			SEQ_NO
+		FROM
+			HY_PRODUCTION_RESOURCES_T
+		WHERE
+			PRODUCTION_ID=#{productionId}
+	</select>
+</mapper>

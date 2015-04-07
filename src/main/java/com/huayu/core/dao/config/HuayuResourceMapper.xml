@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.core.dao.mapper.HuayuResourceMaper">
+	<cache></cache>
+
+	<resultMap type="com.huayu.core.bean.vo.HuayuResources" id="HuayuResourcesMap">
+		<result property="id" column="ID" />
+		<result property="resourceName" column="resource_name" />
+		<result property="resourcePath" column="resource_path" />
+		<result property="resourceType" column="resource_type" />
+		<result property="contentType" column="content_type" />
+		<result property="resourceSize" column="resource_size" />
+		<result property="resourceWidth" column="resource_width" />
+		<result property="resourceHeight" column="resource_height" />
+		<result property="status" column="status" />
+		<result property="createdBy" column="created_by" />
+		<result property="createdDate" column="created_date" />
+	</resultMap>
+	
+	<insert id="insertResource" parameterType="com.huayu.core.bean.vo.HuayuResources" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO HY_RESOURCES_T(
+			<if test="resourceName!=null">
+				RESOURCE_NAME,
+			</if>
+			<if test="resourcePath!=null">
+				RESOURCE_PATH,
+			</if>
+			<if test="resourceType!=null">
+				RESOURCE_TYPE,
+			</if>
+			<if test="contentType!=null">
+				CONTENT_TYPE,
+			</if>
+			<if test="resourceSize">
+				RESOURCE_SIZE,
+			</if>
+			<if test="resourceWidth">
+				RESOURCE_WIDTH,
+			</if>
+				<if test="resourceHeight">
+				RESOURCE_HEIGHT,
+			</if>
+			<if test="status">
+				STATUS,
+			</if>
+			<if test="createdBy">
+				CREATED_BY,
+			</if>
+			CREATED_DATE
+		) 
+		VALUES(
+			<if test="resourceName!=null">
+				#{resourceName},
+			</if>
+			<if test="resourcePath!=null">
+				#{resourcePath},
+			</if>
+			<if test="resourceType!=null">
+				#{resourceType},
+			</if>
+			<if test="contentType!=null">
+				#{contentType},
+			</if>
+			<if test="resourceSize!=null">
+				#{resourceSize},
+			</if>
+			<if test="resourceWidth!=null">
+				#{resourceWidth},
+			</if>
+				<if test="resourceHeight!=null">
+				#{resourceHeight},
+			</if>
+			<if test="status!=null">
+				#{status},
+			</if>
+			<if test="createdBy!=null">
+				#{createdBy},
+			</if>
+			NOW()
+		)
+	</insert>
+	
+	<select id="selectResourceById" parameterType="int" resultMap="HuayuResourcesMap">
+		SELECT 
+			ID,
+			RESOURCE_NAME,
+			RESOURCE_PATH,
+			RESOURCE_TYPE,
+			CONTENT_TYPE,
+			RESOURCE_SIZE,
+			RESOURCE_WIDTH,
+			RESOURCE_HEIGHT,
+			STATUS,
+			CREATED_BY,
+			CREATED_DATE
+		FROM 
+			HY_RESOURCES_T 
+		WHERE ID=#{id} AND STATUS=1
+		LIMIT 1
+	</select>
+</mapper>

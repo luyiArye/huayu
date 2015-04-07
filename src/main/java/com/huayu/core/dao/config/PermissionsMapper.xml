@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.core.dao.mapper.PermissionsMapper">
+	<cache></cache>
+	
+	<resultMap type="com.huayu.core.bean.vo.Permissions" id="PermissionsMap">
+		<result property="permissionsKey" column="PERMISSIONS_KEY" />
+		<result property="parentKey" column="PARENT_KEY" />
+		<result property="permissionsDesc" column="PERMISSIONS_DESC" />
+		<result property="permissionUrl" column="PERMISSION_URL" />
+	</resultMap>
+
+	<select id="checkExistsPermission" parameterType="com.huayu.core.bean.vo.Permissions" resultType="long">
+		SELECT COUNT(1) FROM TPL_PERMISSIONS_T T 
+		WHERE T.PERMISSIONS_KEY=#{permissionsKey}
+	</select>
+	
+	<insert id="insertPermission" parameterType="com.huayu.core.bean.vo.Permissions">
+		INSERT INTO TPL_PERMISSIONS_T(
+			<if test="parentKey!=null">
+				PARENT_KEY,
+			</if>
+			<if test="permissionsDesc!=null">
+				PERMISSIONS_DESC,
+			</if>
+			<if test="permissionUrl!=null">
+				PERMISSION_URL,
+			</if>
+			PERMISSIONS_KEY
+		)
+		VALUES(
+			<if test="parentKey!=null">
+				#{parentKey},
+			</if>
+			<if test="permissionsDesc!=null">
+				#{permissionsDesc},
+			</if>
+			<if test="permissionUrl!=null">
+				#{permissionUrl},
+			</if>
+			#{permissionsKey}
+		)
+	</insert>
+	
+	<select id="selectUserPermissions" resultMap="PermissionsMap" parameterType="java.util.List">
+		SELECT 
+			P_T.PERMISSIONS_KEY,
+			P_T.PARENT_KEY,
+			P_T.PERMISSIONS_DESC,
+			P_T.PERMISSION_URL
+		FROM
+			TPL_PERMISSIONS_T P_T,
+			TPL_ROLE_PERMISSIONS_REF_T RPR_T
+		WHERE 
+			P_T.PERMISSIONS_KEY=RPR_T.PERMISSIONS_KEY
+			AND RPR_T.ROLE_ID IN(
+				<trim suffixOverrides=",">
+					-1,
+					<foreach collection="userRoleList" item="userRole" separator=",">
+						#{userRole.id}
+					</foreach>
+				</trim>
+			)
+	</select>
+	
+	<select id="selectUserLimitPermissions" resultMap="PermissionsMap" parameterType="java.math.BigDecimal">
+		SELECT 
+			P_T.PERMISSIONS_KEY,
+			P_T.PARENT_KEY,
+			P_T.PERMISSIONS_DESC,
+			P_T.PERMISSION_URL
+		FROM
+			TPL_PERMISSIONS_T P_T,
+			TPL_PERMISSIONS_LIMIT_T PL_T
+		WHERE
+			P_T.PERMISSIONS_KEY=PL_T.PERMISSIONS_KEY
+			AND PL_T.USER_ID=#{userId}
+	</select>
+</mapper>

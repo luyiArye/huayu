@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.production.dao.mapper.ProductionMapper">
+	<cache></cache>
+
+	<resultMap type="com.huayu.production.bean.vo.Production" id="ProductionMap">
+		<result property="id" column="ID" />
+		<result property="title" column="TITLE" />
+		<result property="content" column="CONTENT" />
+		<result property="categoryId" column="CATEGORY_ID" />
+		<result property="status" column="STATUS" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdDate" column="CREATED_DATE" />
+		<result property="lastupdatedBy" column="LASTUPDATED_BY" />
+		<result property="lastupdatedDate" column="LASTUPDATED_DATE" />
+		<result property="praiseCount" column="PRAISE_COUNT" />
+		<result property="trampleCount" column="TRAMPLE_COUNT" />
+		<result property="browseCount" column="BROWSE_COUNT" />
+		<result property="transCount" column="TRANS_COUNT" />
+		<result property="shareCount" column="SHARE_COUNT" />
+		<result property="collectCount" column="COLLECT_COUNT" />
+		<result property="commentCount" column="COMMENT_COUNT" />
+		
+		<association property="createdByUser" column="CREATED_BY" resultMap="UserMap" 
+			javaType="com.huayu.core.bean.vo.User"></association>
+	</resultMap>
+	
+	<resultMap type="com.huayu.core.bean.vo.User" id="UserMap">
+		<result property="id" column="U_ID" />
+		<result property="userAccount" column="U_USER_ACCOUNT" />
+		<result property="userName" column="U_USER_NAME" />
+		<result property="userPassword" column="U_USER_PASSWORD" />
+		<result property="userDesc" column="U_USER_DESC" />
+		<result property="systemUser" column="U_SYSTEM_USER" /> 
+		<result property="accountType" column="U_ACCOUNT_TYPE" /> 
+		<result property="signatureImgId" column="U_SIGNATURE_IMG_ID" /> 
+		<result property="createdDate" column="U_CREATED_DATE" />
+		<result property="createdBy" column="U_CREATED_BY" />
+		<result property="lastupdatedDate" column="U_LASTUPDATED_DATE" />
+		<result property="lastupdatedby" column="U_LASTUPDATED_BY" />
+	</resultMap>
+	
+	<insert id="insertProduction" parameterType="com.huayu.production.bean.vo.Production" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO HY_PRODUCTION_T(
+			<if test="title!=null">
+				TITLE,
+			</if>
+			<if test="content!=null">
+				CONTENT,
+			</if>
+			<if test="categoryId!=null">
+				CATEGORY_ID,
+			</if>
+			<if test="status!=null">
+				STATUS,
+			</if>
+			<if test="createdBy!=null">
+				CREATED_BY,
+			</if>
+			CREATED_DATE
+		)
+		VALUES(
+			<if test="title!=null">
+				#{title},
+			</if>
+			<if test="content!=null">
+				#{content},
+			</if>
+			<if test="categoryId!=null">
+				#{categoryId},
+			</if>
+			<if test="status!=null">
+				#{status},
+			</if>
+			<if test="createdBy!=null">
+				#{createdBy},
+			</if>
+			NOW()
+		)
+	</insert>
+	
+	<select id="selectProduction" parameterType="com.huayu.production.bean.vo.Production" resultMap="ProductionMap">
+		SELECT
+			P_T.ID,
+			P_T.TITLE,
+			P_T.CONTENT,
+			P_T.CATEGORY_ID,
+			P_T.STATUS,
+			P_T.CREATED_BY,
+			P_T.CREATED_DATE,
+			P_T.LASTUPDATED_BY,
+			P_T.LASTUPDATED_DATE,
+			P_T.PRAISE_COUNT,
+			P_T.TRAMPLE_COUNT,
+			P_T.BROWSE_COUNT,
+			P_T.TRANS_COUNT,
+			P_T.SHARE_COUNT,
+			P_T.COLLECT_COUNT,
+			P_T.COMMENT_COUNT,
+			U_T.ID U_ID,
+			U_T.USER_ACCOUNT U_USER_ACCOUNT,
+			U_T.USER_NAME U_USER_NAME,
+			U_T.USER_DESC U_USER_DESC,
+			U_T.SYSTEM_USER U_SYSTEM_USER,
+			U_T.USER_STATUS U_USER_STATUS,
+			U_T.ACCOUNT_TYPE U_ACCOUNT_TYPE,
+			U_T.SIGNATURE_IMG_ID U_SIGNATURE_IMG_ID
+		FROM 
+			HY_PRODUCTION_T P_T,
+			TPL_USER_T U_T
+		<where>
+			P_T.CREATED_BY=U_T.ID
+			AND P_T.STATUS=1
+			<if test="categoryId!=null">
+				AND P_T.CATEGORY_ID=#{categoryId}
+			</if>
+			<if test="id!=null">
+				AND P_T.ID=#{id}
+			</if>
+			<if test="createdBy!=null">
+				AND P_T.CREATED_BY=#{createdBy}
+				<if test="operationType!=null">
+					AND EXISTS (
+						SELECT 
+							1 
+						FROM 
+							HY_PRODUCTION_OPERATION_T T 
+						WHERE 
+							T.USER_ID=#{createdBy} 
+							AND T.OPERATION_TYPE=#{operationType}
+							AND T.PRODUCTION_ID=P_T.ID
+					)
+				</if>
+			</if>
+		</where>
+		ORDER BY P_T.CREATED_DATE DESC
+		LIMIT #{start}, #{pageSize}
+	</select>
+	
+	<select id="selectProductionCount" parameterType="com.huayu.production.bean.vo.Production" resultType="int">
+		SELECT
+			COUNT(1)
+		FROM 
+			HY_PRODUCTION_T P_T
+		<where>
+			P_T.STATUS=1
+			<if test="categoryId!=null">
+				AND P_T.CATEGORY_ID=#{categoryId}
+			</if>
+			<if test="id!=null">
+				AND P_T.ID=#{id}
+			</if>
+			<if test="createdBy!=null">
+				AND P_T.CREATED_BY=#{createdBy}
+				<if test="operationType!=null">
+					AND EXISTS (
+						SELECT 
+							1 
+						FROM 
+							HY_PRODUCTION_OPERATION_T T 
+						WHERE 
+							T.USER_ID=#{createdBy} 
+							AND T.OPERATION_TYPE=#{operationType}
+							AND T.PRODUCTION_ID=P_T.ID
+					)
+				</if>
+			</if>
+		</where>
+		LIMIT 1
+	</select>
+	
+	<update id="updateProduction" parameterType="com.huayu.production.bean.vo.Production">
+		UPDATE HY_PRODUCTION_T SET
+			<if test="title!=null">
+				TITLE=#{title},
+			</if>
+			<if test="content!=null">
+				CONTENT=#{content},
+			</if>
+			<if test="categoryId!=null">
+				CATEGORY_ID=#{categoryId},
+			</if>
+			<if test="status!=null">
+				STATUS=#{status},
+			</if>
+			<if test="lastupdatedBy!=null">
+				LASTUPDATED_BY=#{lastupdatedBy},
+			</if>
+			LASTUPDATED_DATE=NOW()
+		WHERE
+			ID=#{id}
+	</update>
+	
+	<update id="increaseOpCount" parameterType="com.huayu.production.bean.vo.Production">
+		UPDATE HY_PRODUCTION_T SET
+			<if test="praiseCount!=0">
+				PRAISE_COUNT=PRAISE_COUNT+1,
+			</if>
+			<if test="trampleCount!=0">
+				TRAMPLE_COUNT=TRAMPLE_COUNT+1,
+			</if>
+			<if test="browseCount!=0">
+				BROWSE_COUNT=BROWSE_COUNT+1,
+			</if>
+			<if test="transCount!=0">
+				TRANS_COUNT=TRANS_COUNT+1,
+			</if>
+			<if test="shareCount!=0">
+				SHARE_COUNT=SHARE_COUNT+1,
+			</if>
+			<if test="collectCount!=0">
+				COLLECT_COUNT=COLLECT_COUNT+1,
+			</if>
+			<if test="commentCount!=0">
+				COMMENT_COUNT=COMMENT_COUNT+1,
+			</if>
+			LASTUPDATED_BY=#{lastupdatedBy, jdbcType=NUMERIC},
+			LASTUPDATED_DATE=NOW()
+		WHERE ID=#{id}
+	</update>
+	
+	<update id="reduceOpCount" parameterType="com.huayu.production.bean.vo.Production">
+		UPDATE HY_PRODUCTION_T SET
+			<if test="praiseCount!=0">
+				PRAISE_COUNT=CASE WHEN PRAISE_COUNT-1 <![CDATA[<=]]> 0 THEN 0 ELSE PRAISE_COUNT-1 END,
+			</if>
+			<if test="trampleCount!=0">
+				TRAMPLE_COUNT=CASE WHEN TRAMPLE_COUNT-1 <![CDATA[<=]]> 0 THEN 0 ELSE TRAMPLE_COUNT-1 END,
+			</if>
+			<if test="browseCount!=0">
+				BROWSE_COUNT=CASE WHEN BROWSE_COUNT-1 <![CDATA[<=]]> 0 THEN 0 ELSE BROWSE_COUNT-1 END,
+			</if>
+			<if test="transCount!=0">
+				TRANS_COUNT=CASE WHEN TRANS_COUNT-1 <![CDATA[<=]]> 0 THEN 0 ELSE TRANS_COUNT-1 END,
+			</if>
+			<if test="shareCount!=0">
+				SHARE_COUNT=CASE WHEN SHARE_COUNT-1 <![CDATA[<=]]> 0 THEN 0 ELSE SHARE_COUNT-1 END,
+			</if>
+			<if test="collectCount!=0">
+				COLLECT_COUNT=CASE WHEN COLLECT_COUNT-1 <![CDATA[<=]]> 0 THEN 0 ELSE COLLECT_COUNT-1 END,
+			</if>
+			<if test="commentCount!=0">
+				COMMENT_COUNT=CASE WHEN COMMENT_COUNT-1 <![CDATA[<=]]> 0 THEN 0 ELSE COMMENT_COUNT-1 END,
+			</if>
+			LASTUPDATED_BY=#{lastupdatedBy, jdbcType=NUMERIC},
+			LASTUPDATED_DATE=NOW()
+		WHERE ID=#{id}
+	</update>
+	
+	<select id="statisticsPOCount"  parameterType="int" resultMap="ProductionMap">
+		SELECT
+			P_T.ID,
+			P_T.PRAISE_COUNT,
+			P_T.TRAMPLE_COUNT,
+			P_T.BROWSE_COUNT,
+			P_T.TRANS_COUNT,
+			P_T.SHARE_COUNT,
+			P_T.COLLECT_COUNT,
+			P_T.COMMENT_COUNT
+		FROM 
+			HY_PRODUCTION_T P_T
+		<where>
+			P_T.ID=#{id}
+		</where>
+		LIMIT 1
+	</select>
+</mapper>

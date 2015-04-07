@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.user.dao.mapper.ForgetPwdVerifyInfoMapper">
+	<cache></cache>
+
+	<resultMap type="com.huayu.user.bean.ForgetPwdVerifyInfo" id="ForgetPwdVerifyInfoMap">
+		<result property="userAccount" column="USER_ACCOUNT" />
+		<result property="forgetTime" column="FORGET_TIME" />
+		<result property="status" column="STATUS" />
+	</resultMap>
+	
+	<insert id="insertForgetPwdVerifyInfo" parameterType="com.huayu.user.bean.ForgetPwdVerifyInfo">
+		INSERT HY_FORGET_PWD_VERIFY_INFO_T(
+			USER_ACCOUNT,
+			FORGET_TIME
+		)
+		VALUES(
+			#{userAccount},
+			#{forgetTime}
+		)
+	</insert>
+	
+	<select id="checkForgetPwdVerifyInfo" parameterType="com.huayu.user.bean.ForgetPwdVerifyInfo" resultType="int">
+		SELECT 
+			COUNT(1)
+		FROM 
+			HY_FORGET_PWD_VERIFY_INFO_T
+		WHERE USER_ACCOUNT=#{userAccount} <!-- AND FORGET_TIME=#{forgetTime} --> AND STATUS=1
+		LIMIT 1
+	</select>
+	
+	<update id="disableForgetPwdVerifyInfo" parameterType="com.huayu.user.bean.ForgetPwdVerifyInfo">
+		UPDATE HY_FORGET_PWD_VERIFY_INFO_T SET STATUS=0
+		WHERE USER_ACCOUNT=#{userAccount} AND STATUS=1 <!-- AND FORGET_TIME=#{forgetTime} -->
+	</update>
+</mapper>

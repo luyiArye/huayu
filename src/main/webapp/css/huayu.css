@@ -1,0 +1,129 @@
+.code-img {
+	cursor: pointer;
+	margin-left: 5px;
+}
+
+.sortableUl {
+	margin: 0px;
+	padding: 0px;
+}
+
+.sortableUl li {
+	margin-bottom: 5px;
+	list-style: none;
+	padding: 2px;
+	cursor: move;
+}
+
+.upImageDiv {
+	height: 110px;
+	width: 110px;
+	background-color: #e3e3e3;
+	overflow: hidden;
+	/* line-height: 100px; */
+	display: block;
+	padding: 2px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.upImageDiv img {
+	max-width: 100%;
+	height: auto;
+}
+
+.productListCarousel {
+	height: 500px;
+	background-color: #e3e3e3;
+}
+
+.productListCarousel .item {
+	height: 500px;
+}
+
+.item {
+	position: relative;
+}
+
+.item img {
+	position: absolute;
+	margin: auto;
+	width: auto;
+	height: auto;
+	max-height: 500px;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
+
+.carousel-indicators {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	z-index: 5;
+	margin: 0;
+	list-style: none;
+}
+
+.carousel-indicators {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	z-index: 5;
+	margin: 0;
+	list-style: none;
+	background: transparent;
+	height: 20px;
+}
+
+.carousel-indicators li {
+	
+}
+
+.carousel-caption {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 15px;
+	background: #333333;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+#comments li.top .comment-body {
+	padding-left: 15px;
+}
+
+.pagination{
+	margin: 0px;
+}
+
+#_messageLabel{
+	display: table-cell;
+	vertical-align: middle;
+	padding-left: 10px;
+}
+
+.dialogIcoDiv{
+	height: 48px; 
+	width: 48px;
+	border:1px solid #FEFEFE;
+	display: table-cell;
+}
+
+.error_ico{
+	background: url("../images/alert_icons.png") no-repeat scroll 0px -48px;
+}
+
+.warn_ico{
+	background: url("../images/alert_icons.png") no-repeat scroll 0px -96px;
+}
+
+.confirm_ico{
+	background: url("../images/alert_icons.png") no-repeat scroll 0px -144px;
+}
+
+.success_ico{
+	background: url("../images/alert_icons.png") no-repeat scroll 0px 0px;
+}

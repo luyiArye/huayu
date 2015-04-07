@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.core.dao.mapper.UserRoleMapper">
+	<cache></cache>
+
+	<resultMap type="com.huayu.core.bean.vo.UserRole" id="UserRoleMap">
+		<result property="id" column="ID" />
+		<result property="roleName" column="ROLE_NAME" />
+		<result property="roleDesc" column="ROLE_DESC" />
+		<result property="adminRole" column="ADMIN_ROLE" />
+		<result property="defaultRole" column="DEFAULT_ROLE" />
+		<result property="createdDate" column="CREATED_DATE" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="lastupdatedDate" column="LASTUPDATED_DATE" />
+		<result property="lastupdatedBy" column="LASTUPDATED_BY" />
+	</resultMap>
+
+	<select id="checkExistsRole" parameterType="com.huayu.core.bean.vo.UserRole" resultType="long">
+		SELECT COUNT(1) FROM TPL_USER_ROLE_T T 
+		WHERE T.ROLE_NAME=TRIM(#{roleName})
+	</select>
+	
+	<insert id="insertRole" parameterType="com.huayu.core.bean.vo.UserRole" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO TPL_USER_ROLE_T(
+			<if test="roleName!=null">
+				ROLE_NAME,
+			</if>
+			<if test="roleDesc!=null">
+				ROLE_DESC,
+			</if>
+			<if test="adminRole!=null">
+				ADMIN_ROLE,
+			</if>
+			<if test="defaultRole!=null">
+				DEFAULT_ROLE,
+			</if>
+			<if test="createdBy!=null">
+				CREATED_BY,
+			</if>
+			CREATED_DATE
+		)
+		VALUES(
+			<if test="roleName!=null">
+				#{roleName},
+			</if>
+			<if test="roleDesc!=null">
+				#{roleDesc},
+			</if>
+			<if test="adminRole!=null">
+				#{adminRole},
+			</if>
+			<if test="defaultRole!=null">
+				#{defaultRole},
+			</if>
+			<if test="createdBy!=null">
+				#{createdBy},
+			</if>
+			NOW()
+		)
+	</insert>
+	
+	<select id="selectUserRole" parameterType="com.huayu.core.bean.vo.UserRole" resultMap="UserRoleMap">
+		SELECT 
+			ID,
+			ROLE_NAME,
+			ROLE_DESC,
+			ADMIN_ROLE,
+			DEFAULT_ROLE,
+			CREATED_DATE,
+			CREATED_BY,
+			LASTUPDATED_DATE,
+			LASTUPDATED_BY
+		FROM 
+			TPL_USER_ROLE_T
+		<where>
+			<if test="id!=null">
+				AND ID=#{id}
+			</if>
+			<if test="roleName!=null">
+				AND ROLE_NAME=#{roleName}
+			</if>
+			<if test="adminRole!=null">
+				AND ADMIN_ROLE=#{adminRole}
+			</if>
+			<if test="defaultRole!=null">
+				AND DEFAULT_ROLE=#{defaultRole}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectUserRoleList" parameterType="java.math.BigDecimal" resultMap="UserRoleMap">
+		SELECT 
+			R_T.ID,
+			R_T.ROLE_NAME,
+			R_T.ROLE_DESC,
+			R_T.ADMIN_ROLE,
+			R_T.DEFAULT_ROLE,
+			R_T.CREATED_DATE,
+			R_T.CREATED_BY,
+			R_T.LASTUPDATED_DATE,
+			R_T.LASTUPDATED_BY
+		FROM 
+			TPL_USER_ROLE_T R_T,
+			TPL_USER_ROLE_REF_T URF_T
+		WHERE 
+			R_T.ID=URF_T.ROLE_ID
+			AND URF_T.USER_ID=#{userId}
+	</select>
+</mapper>

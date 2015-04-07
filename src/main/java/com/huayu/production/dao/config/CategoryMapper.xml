@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.production.dao.mapper.CategoryMapper">
+	<cache></cache>
+
+	<resultMap type="com.huayu.production.bean.vo.Category" id="CategoryMap">
+		<result property="id" column="ID" />
+		<result property="pid" column="PID" />
+		<result property="categoryName" column="CATEGORY_NAME" />
+		<result property="categoryDesc" column="CATEGORY_DESC" />
+		<result property="createdBy" column="CREATED_BY" />
+		<result property="createdDate" column="CREATED_DATE" />
+	</resultMap>
+	
+	<select id="selectCategory" parameterType="com.huayu.production.bean.vo.Category" resultMap="CategoryMap">
+		SELECT 
+			ID,
+			PID,
+			CATEGORY_NAME,
+			CATEGORY_DESC,
+			CREATED_BY,
+			CREATED_DATE
+		FROM 
+			HY_CATEGORY_T
+		<where>
+			<if test="categoryName!=null">
+				AND CATEGORY_NAME=#{categoryName}
+			</if>
+			<if test="pid!=null">
+				AND PID=#{pid}
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huayu.production.dao.mapper.ProductionCommentMapper">
+	<cache></cache>
+
+	<resultMap type="com.huayu.production.bean.vo.ProductionComment" id="ProductionCommentMap">
+		<result property="id" column="ID" />
+		<result property="refId" column="REF_ID" />
+		<result property="content" column="CONTENT" />
+		<result property="productionId" column="PRODUCTION_ID" />
+		<result property="userId" column="USER_ID" />
+		<result property="createdDate" column="CREATED_DATE" />
+		<result property="status" column="STATUS" />
+		
+		<association property="commentUser" column="USER_ID" resultMap="UserMap" 
+			javaType="com.huayu.core.bean.vo.User"></association>
+	</resultMap>
+	
+	<resultMap type="com.huayu.core.bean.vo.User" id="UserMap">
+		<result property="id" column="U_ID" />
+		<result property="userAccount" column="U_USER_ACCOUNT" />
+		<result property="userName" column="U_USER_NAME" />
+		<result property="userPassword" column="U_USER_PASSWORD" />
+		<result property="userDesc" column="U_USER_DESC" />
+		<result property="systemUser" column="U_SYSTEM_USER" /> 
+		<result property="accountType" column="U_ACCOUNT_TYPE" /> 
+		<result property="signatureImgId" column="U_SIGNATURE_IMG_ID" /> 
+		<result property="createdDate" column="U_CREATED_DATE" />
+		<result property="createdBy" column="U_CREATED_BY" />
+		<result property="lastupdatedDate" column="U_LASTUPDATED_DATE" />
+		<result property="lastupdatedby" column="U_LASTUPDATED_BY" />
+	</resultMap>
+	
+	<select id="selectProductionComment" parameterType="com.huayu.production.bean.vo.ProductionComment" resultMap="ProductionCommentMap">
+		SELECT
+			PC_T.ID,
+			PC_T.REF_ID,
+			PC_T.CONTENT,
+			PC_T.PRODUCTION_ID,
+			PC_T.USER_ID,
+			PC_T.CREATED_DATE,
+			PC_T.STATUS,
+			U_T.ID U_ID,
+			U_T.USER_ACCOUNT U_USER_ACCOUNT,
+			U_T.USER_NAME U_USER_NAME,
+			U_T.USER_DESC U_USER_DESC,
+			U_T.SYSTEM_USER U_SYSTEM_USER,
+			U_T.USER_STATUS U_USER_STATUS,
+			U_T.ACCOUNT_TYPE U_ACCOUNT_TYPE,
+			U_T.SIGNATURE_IMG_ID U_SIGNATURE_IMG_ID
+		FROM 
+			HY_PRODUCTION_COMMENT_T PC_T,
+			TPL_USER_T U_T
+		<where>
+			PC_T.USER_ID=U_T.ID
+			AND PC_T.STATUS=1
+			<if test="productionId!=null">
+				AND PC_T.PRODUCTION_ID=#{productionId}
+			</if>
+			<if test="userId!=null">
+				AND PC_T.USER_ID=#{userId}
+			</if>
+		</where>
+		ORDER BY PC_T.CREATED_DATE
+		LIMIT #{start}, #{pageSize}
+	</select>
+	
+	<select id="selectProductionCommentCount" parameterType="com.huayu.production.bean.vo.ProductionComment" resultType="int">
+		SELECT
+			COUNT(1)
+		FROM 
+			HY_PRODUCTION_COMMENT_T PC_T,
+			TPL_USER_T U_T
+		<where>
+			PC_T.USER_ID=U_T.ID
+			AND PC_T.STATUS=1
+			<if test="productionId!=null">
+				AND PC_T.PRODUCTION_ID=#{productionId}
+			</if>
+			<if test="userId!=null">
+				AND PC_T.USER_ID=#{userId}
+			</if>
+		</where>
+		LIMIT 1
+	</select>
+	
+	<insert id="insertProductionComment" parameterType="com.huayu.production.bean.vo.ProductionComment">
+		INSERT INTO HY_PRODUCTION_COMMENT_T(
+			<if test="refId!=null">
+				REF_ID,
+			</if>
+			<if test="content!=null">
+				CONTENT,
+			</if>
+			<if test="productionId!=null">
+				PRODUCTION_ID,
+			</if>
+			<if test="userId!=null">
+				USER_ID,
+			</if>
+			<if test="status!=null">
+				STATUS,
+			</if>
+			CREATED_DATE
+		)
+		VALUES(
+			<if test="refId!=null">
+				#{refId},
+			</if>
+			<if test="content!=null">
+				#{content},
+			</if>
+			<if test="productionId!=null">
+				#{productionId},
+			</if>
+			<if test="userId!=null">
+				#{userId},
+			</if>
+			<if test="status!=null">
+				#{status},
+			</if>
+			NOW()
+		)
+	</insert>
+</mapper>
